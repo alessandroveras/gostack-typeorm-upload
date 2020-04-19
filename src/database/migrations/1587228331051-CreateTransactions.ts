@@ -20,7 +20,7 @@ export default class CreateTransactions1587228331051
           },
           {
             name: 'value',
-            type: 'money',
+            type: 'float',
           },
           {
             name: 'type',

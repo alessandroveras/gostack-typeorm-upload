@@ -22,10 +22,10 @@ export default async function manageCategorie(
           title: requestedCategory,
         });
 
+        await categoriesRepository.save(newCategory);
+
         const { id } = newCategory;
         request.categoryId = id;
-
-        await categoriesRepository.save(newCategory);
 
         return next();
       }
