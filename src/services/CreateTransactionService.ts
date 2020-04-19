@@ -5,10 +5,15 @@ import TransactionsRepository from '../repositories/TransactionsRepository';
 
 // import AppError from '../errors/AppError';
 
+export enum TransactionType {
+  INCOME = 'income',
+  OUTCOME = 'outcome',
+}
+
 interface RequestDTO {
   title: string;
   value: number;
-  type: string;
+  type: TransactionType;
   category_id: string;
 }
 
