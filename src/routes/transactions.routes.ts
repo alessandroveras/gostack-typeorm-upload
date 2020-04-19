@@ -26,6 +26,7 @@ transactionsRouter.get('/', async (request, response) => {
   const extendedTransactions = transactions.map(transaction => {
     // retrieve category of transaction
 
+    // eslint-disable-next-line no-param-reassign
     transaction.category = categories.find(
       category => category.id === transaction.category_id,
     );
