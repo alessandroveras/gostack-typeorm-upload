@@ -29,7 +29,7 @@ class Transaction {
   })
   type: TransactionType;
 
-  @Column()
+  @Column('decimal')
   value: number;
 
   @Column()
