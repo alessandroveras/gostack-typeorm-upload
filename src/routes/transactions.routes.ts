@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 
 import { getCustomRepository } from 'typeorm';
+
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
 import DeleteTransactionService from '../services/DeleteTransactionService';
@@ -18,25 +19,40 @@ transactionsRouter.get('/', async (request, response) => {
   // initialize repositories
   const transactionsRepository = getCustomRepository(TransactionsRepository);
 
-  // retrieve all transactions
-  const transactions = await transactionsRepository.find({
-    select: ['id', 'title', 'value', 'type'],
-    relations: ['category'],
-  });
-
-  // retrieve balance
+  // get balance
   const balance = await transactionsRepository.getBalance();
 
-  // format transactions
-  const extendedTransactions = transactions.map(transaction => {
-    delete transaction.category.created_at;
-    delete transaction.category.updated_at;
+  // método com o uso do map pra fazer o enriquecimento das transactions
+  // retrieve all transactions
+  // const transactions = await transactionsRepository.find({
+  //   select: ['id', 'title', 'value', 'type'],
+  //   relations: ['category'],
+  // });
 
-    return transaction;
-  });
+  // format transactions
+  // const extendedTransactions = transactions.map(transaction => {
+  //   delete transaction.category.created_at;
+  //   delete transaction.category.updated_at;
+
+  //   return transaction;
+  // });
+
+  // metodo utilizando as funçoes do banco para fazer o join das tabelas
+  const transactions = await transactionsRepository
+    .createQueryBuilder('transaction')
+    .leftJoinAndSelect('transaction.category', 'category')
+    .select([
+      'transaction.id',
+      'transaction.title',
+      'transaction.value',
+      'transaction.type',
+      'category.id',
+      'category.title',
+    ])
+    .getMany();
 
   const extract = {
-    transactions: extendedTransactions,
+    transactions,
     balance,
   };
 
